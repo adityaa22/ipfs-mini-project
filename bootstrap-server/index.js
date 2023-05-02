@@ -9,7 +9,6 @@ import { gossipsub } from '@chainsafe/libp2p-gossipsub'
 import { exec } from 'child_process'
 import express from "express"
 import cors from "cors"
-import { generateKeyPair } from 'crypto'
 
 const app = express()
 app.use(express.json());
@@ -81,7 +80,8 @@ const FETCH_CPU_LOAD = (() => {
         console.log(CPU_LOAD)
         if (load === 100) {
             console.log("No Peers connected")
-        } else {     
+        } else { 
+            bootstrapNode.libp2p.pubsub.publish(`PEER_${peer}`, new TextEncoder().encode("hey peer"))
             console.log(`Peer with least CPU Load is ${peer} with average load of ${load}`)
         }
     },3000)
@@ -94,7 +94,7 @@ function test() {
     }, 4000)
 
 }
-// test()
+test()
 bootstrapNode.libp2p.pubsub.subscribe("NEW_PEER")
 bootstrapNode.libp2p.pubsub.subscribe("CPU_LOAD")
 bootstrapNode.libp2p.pubsub.addEventListener('message', (msg) => {
