@@ -18,7 +18,10 @@
     "@libp2p/bootstrap": "^6.0.3",
     "@libp2p/tcp": "^7.0.0",
     "blockstore-core": "^4.1.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "datastore-core": "^9.1.1",
+    "express": "^4.18.2",
     "getpid": "^1.0.0",
     "helia": "^1.0.3",
     "libp2p": "^0.44.0"

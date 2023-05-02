@@ -3,13 +3,24 @@ import { createLibp2p } from 'libp2p'
 import { noise } from '@chainsafe/libp2p-noise'
 import { yamux } from '@chainsafe/libp2p-yamux'
 import { tcp } from '@libp2p/tcp'
-import { bootstrap } from '@libp2p/bootstrap'
-import { unixfs } from '@helia/unixfs'
 import { MemoryBlockstore } from 'blockstore-core'
 import { MemoryDatastore } from 'datastore-core'
 import { gossipsub } from '@chainsafe/libp2p-gossipsub'
 import { exec } from 'child_process'
-import { multiaddr } from '@multiformats/multiaddr'
+import express from "express"
+import cors from "cors"
+import { generateKeyPair } from 'crypto'
+
+const app = express()
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors())
+
+app.listen(9002, () => {
+    console.log("Server Listening on PORT 9002")
+})
+
+
 async function createNode() {
     // the blockstore is where we store the blocks that make up files
     const blockstore = new MemoryBlockstore()
@@ -83,7 +94,7 @@ function test() {
     }, 4000)
 
 }
-test()
+// test()
 bootstrapNode.libp2p.pubsub.subscribe("NEW_PEER")
 bootstrapNode.libp2p.pubsub.subscribe("CPU_LOAD")
 bootstrapNode.libp2p.pubsub.addEventListener('message', (msg) => {
