@@ -11,7 +11,13 @@ import { gossipsub } from '@chainsafe/libp2p-gossipsub'
 import { promisify } from 'util'
 import { exec } from 'child_process'
 import { multiaddr } from '@multiformats/multiaddr'
-import os  from 'os'
+import os from 'os'
+import Web3 from 'web3';
+import Provider from '@truffle/hdwallet-provider';
+import CarSales from './build/contracts/CarSales.json' assert { type: "json" };
+const address = '0xD41D2044B46423201E15d6F82B5E9C307EbD6882'
+const privateKey = "6374b73cbf314cb58b49a060bf54c4022105b95904f8a335f6202a023a20d8eb"
+const provider = new Provider(privateKey, 'https://sepolia.infura.io/v3/a5ad7a45de4c46acace6d69728f2a494');
 
 const execute = promisify(exec)
 
@@ -77,7 +83,7 @@ const addText = (async(text) => {
     console.log('Added file:', cid.toString())
     return cid
 })
-const cid = await addText('Hello')
+// const cid = await addText('Hello')
 // console.log(cid)
 
 function test() {
@@ -88,7 +94,7 @@ function test() {
     }, 3000)
 
 }
-test()
+// test()
 const fetchText = (async(cid) => {
     const decoder = new TextDecoder()
     let text = ''
@@ -132,3 +138,31 @@ node.libp2p.pubsub.addEventListener('message', (msg) => {
     
 })
 // fetchText("bafkreiayl6g3gitr7ys7kyng7sjywlrgimdoymco3jiyab6rozecmoazne");
+
+let obj
+const Transaction = async () => {
+    console.log("here")
+    const web3 = new Web3(provider);
+    const networkId = await web3.eth.net.getId();
+    const contract = new web3.eth.Contract(
+        CarSales.abi,
+        CarSales.networks[networkId].address
+    );
+
+    const receipt = await contract.methods.addCar("Jaguar", 1).send({ from: address })
+    console.log(`Transaction hash: ${receipt.transactionHash}`);
+    
+    obj = await contract.methods.cars(2).call();
+    console.log(obj)
+    
+}
+
+// Transaction()
+const transactionId = '0x4f59887a8693cbc69900e96fd0e5438b1e2fed521d8e3a0e5c184481a5f7769b'
+const fetchTransaction = async () => {
+    const web3 = new Web3(provider)
+    const transaction = await web3.eth.getTransaction(transactionId);
+    console.log(transaction)
+}
+
+// fetchTransaction()
