@@ -32,7 +32,6 @@ const FETCH_CPU_LOAD = (() => {
                 resolve("NO PEERS")
                 return
             }
-            // bootstrapNode.libp2p.pubsub.publish(`PEER_${peer}`, new TextEncoder().encode("hey peer"))
             console.log(`Peer with least CPU Load is ${peer} with average load of ${load}`)
             resolve(peer)
         },2000);

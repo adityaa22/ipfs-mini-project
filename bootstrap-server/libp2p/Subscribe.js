@@ -13,9 +13,6 @@ const Subscribe = () => {
                 const peerID = new TextDecoder().decode(msg.detail.data)
                 bootstrapNode.libp2p.pubsub.publish("PEER_ADDED", new TextEncoder().encode(peerID))
                 break;
-            default:
-                console.log("default")
-                break
         }
     })
 }

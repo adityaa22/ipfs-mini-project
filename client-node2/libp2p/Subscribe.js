@@ -1,15 +1,17 @@
 import node from "../utils/Node.js"
 import { multiaddr } from '@multiformats/multiaddr'
 import os from 'os'
+import { addCar, fetchTransactionDetails } from "../Transaction/Transactions.js"
 
 const Subscribe = () => {
     // subscribe to topics
     node.libp2p.pubsub.subscribe("PEER_ADDED")
     node.libp2p.pubsub.subscribe("FETCH_CPU_LOAD")
-    node.libp2p.pubsub.subscribe(`PEER_${node.libp2p.peerId.toString()}`)
+    node.libp2p.pubsub.subscribe(`PEER_${node.libp2p.peerId.toString()}_ADD`)
+    node.libp2p.pubsub.subscribe(`PEER_${node.libp2p.peerId.toString()}_CHECK`)
 
     // listener for subscribed topics
-    node.libp2p.pubsub.addEventListener('message', (msg) => {
+    node.libp2p.pubsub.addEventListener('message', async (msg) => {
         const topic = msg.detail.topic;
         switch (topic) {
             case "PEER_ADDED":
@@ -26,11 +28,24 @@ const Subscribe = () => {
                 console.log('CPU load is ' + cpuLoad[0]);
                 node.libp2p.pubsub.publish("CPU_LOAD", new TextEncoder().encode(node.libp2p.peerId.toString() + " " + cpuLoad[0]))
                 break;
-            case `PEER_${node.libp2p.peerId.toString()}`:
-                console.log(new TextDecoder().decode(msg.detail.data))
+            case `PEER_${node.libp2p.peerId.toString()}_ADD`:
+                const obj = JSON.parse(new TextDecoder().decode(msg.detail.data))
+                const OwnerID = obj.OwnerID
+                const Model = obj.Model
+                const Price = obj.Price
+                const PrivateKey = obj.PrivateKey
+                const cid = await addCar(PrivateKey, { carName: Model, price: Price }, OwnerID)
+                node.libp2p.pubsub.publish(`PEER_${node.libp2p.peerId.toString()}_ADDED_CAR`, new TextEncoder().encode(cid))
                 break;
-            default:
-                console.log("default")
+            case `PEER_${node.libp2p.peerId.toString()}_CHECK`:
+                const transaction = JSON.parse(new TextDecoder().decode(msg.detail.data))
+                const owner = transaction.OwnerID
+                const TransactionID = transaction.TransactionID
+                const data = await fetchTransactionDetails(TransactionID)
+                let message
+                if (data.OwnerID === owner) message = "successfully validated"
+                else message = "validation failed"
+                node.libp2p.pubsub.publish(`PEER_${node.libp2p.peerId.toString()}_CHECKED_CAR`, new TextEncoder().encode(message))
                 break;
         }
 

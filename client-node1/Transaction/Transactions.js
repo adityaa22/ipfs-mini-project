@@ -9,6 +9,7 @@ const addCar = async(privateKey,CarInfo,OwnerID) => {
     console.log(`index : ${index}`)
     const receipt = await (await contract).methods.addCar(carName, price).send({ from: OwnerID })
     const transactionHash = receipt.transactionHash
+    // console.log(receipt)
     console.log(`Transaction hash: ${transactionHash}`)
     const data = transactionHash + " " + index
     const cid = await addText(data)
@@ -18,18 +19,24 @@ const addCar = async(privateKey,CarInfo,OwnerID) => {
 const fetchTransactionDetails = async(cid) => {
     const contract = Contract()
     const data = await fetchText(cid)
-    console.log(data)
     const array = data.split(" ")
     const transactionHash = array[0]
     const index = array[1];
     const carObj = await (await contract).methods.cars(index).call()
     const transactionObject = {
         transactionHash: transactionHash,
-        carObj
+        OwnerID: carObj.owner,
+        Model: carObj.model,
+        Price: carObj.price,
     }
     return transactionObject
 }
 
+const test = async() => {
+    const contract = Contract()
+    const obj = await (await contract).methods.cars(1).call()
+    return obj
+}
 
-export { addCar, fetchTransactionDetails }
+export { addCar, fetchTransactionDetails, test }
 

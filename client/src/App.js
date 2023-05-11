@@ -1,18 +1,19 @@
 import './App.css';
-import axios from 'axios'
-import {useEffect} from 'react'
-
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import AddCar from './Pages/AddCar';
+import ListCar from './Pages/ListCar';
 function App() {
 
-  useEffect(() => {
-    axios.post("http://localhost:9002/test", ({ msg: "test" })).then((res) => {
-      console.log(res.data);
-    })
-  });
-
   return (
-    <div className="App">
-      App
+    <div className="bg-[#f7f7f7] flex w-full h-[99vh] items-center justify-center">
+      <Router>
+        <Routes>
+          <Route path= "*" element = {<Navigate to = '/addcar' />} />
+          <Route path= "" element = {<Navigate to = '/addcar' />} />
+          <Route path= "/addcar" element = {<AddCar/>} />
+          <Route path= "/listcar" element = {<ListCar/>} />
+        </Routes>
+      </Router>
     </div>
   );
 }
