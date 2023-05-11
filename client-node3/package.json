@@ -17,10 +17,14 @@
     "@helia/unixfs": "^1.2.2",
     "@libp2p/bootstrap": "^6.0.3",
     "@libp2p/tcp": "^7.0.0",
+    "@multiformats/multiaddr": "^12.1.2",
+    "@truffle/hdwallet-provider": "^2.1.10",
     "blockstore-core": "^4.1.0",
     "datastore-core": "^9.1.1",
+    "dotenv": "^16.0.3",
     "getpid": "^1.0.0",
     "helia": "^1.0.3",
-    "libp2p": "^0.44.0"
+    "libp2p": "^0.44.0",
+    "web3": "^1.9.0"
   }
 }
