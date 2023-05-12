@@ -21,6 +21,7 @@ const Subscribe = () => {
                     return;
                 }
                 else node.libp2p.dial(addrs)
+                console.log(node.libp2p.getPeers())
                 break;
 
             case "FETCH_CPU_LOAD":
