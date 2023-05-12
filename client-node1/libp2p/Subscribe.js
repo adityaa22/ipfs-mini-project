@@ -29,6 +29,7 @@ const Subscribe = () => {
                 node.libp2p.pubsub.publish("CPU_LOAD", new TextEncoder().encode(node.libp2p.peerId.toString() + " " + cpuLoad[0]))
                 break;
             case `PEER_${node.libp2p.peerId.toString()}_ADD`:
+                console.log(`adding car details to chain...`)
                 const obj = JSON.parse(new TextDecoder().decode(msg.detail.data))
                 const OwnerID = obj.OwnerID
                 const Model = obj.Model
@@ -41,10 +42,14 @@ const Subscribe = () => {
                 const transaction = JSON.parse(new TextDecoder().decode(msg.detail.data))
                 const owner = transaction.OwnerID
                 const TransactionID = transaction.TransactionID
+                console.log(`validating transaction Details...`)
                 const data = await fetchTransactionDetails(TransactionID)
                 let message
+                console.log(`revieved OwnerID: ${owner}`)
+                console.log(`Found OwnerID: ${data.OwnerID}`)
                 if (data.OwnerID === owner) message = "successfully validated"
                 else message = "validation failed"
+                console.log(`status : ${message}`)
                 node.libp2p.pubsub.publish(`PEER_${node.libp2p.peerId.toString()}_CHECKED_CAR`, new TextEncoder().encode(message))
                 break;
         }
