@@ -1,4 +1,4 @@
 node_modules/
 server-settings/settings.txt
 .env
-smart-contracts
+smart-contracts/truffle-config.js
