@@ -33,10 +33,8 @@ const Subscribe = () => {
                 console.log(`adding car details to chain...`)
                 const obj = JSON.parse(new TextDecoder().decode(msg.detail.data))
                 const OwnerID = obj.OwnerID
-                const Model = obj.Model
-                const Price = obj.Price
-                const PrivateKey = obj.PrivateKey
-                const cid = await addCar(PrivateKey, { carName: Model, price: Price }, OwnerID)
+                const receipt = obj.receipt
+                const cid = await addCar(receipt, OwnerID)
                 node.libp2p.pubsub.publish(`PEER_${node.libp2p.peerId.toString()}_ADDED_CAR`, new TextEncoder().encode(cid))
                 break;
             case `PEER_${node.libp2p.peerId.toString()}_CHECK`:

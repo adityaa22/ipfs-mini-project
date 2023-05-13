@@ -1,15 +1,14 @@
+import Web3 from 'web3';
 import { addText, fetchText } from "../utils/IPFS_FileSystem.js"
 import Contract from "./ContractInstance.js"
 
-const addCar = async(privateKey,CarInfo,OwnerID) => {
-    const contract = Contract(privateKey)
-    const carName = CarInfo.carName
-    const price = CarInfo.price
+const addCar = async (receipt) => {
+    const web3 = new Web3(process.env.NODE_ENDPOINT)
+    const contract = Contract()
     const index = await (await contract).methods.carIndex().call()
     console.log(`index : ${index}`)
-    const receipt = await (await contract).methods.addCar(carName, price).send({ from: OwnerID })
-    const transactionHash = receipt.transactionHash
-    // console.log(receipt)
+    const transaction = await web3.eth.sendSignedTransaction(receipt.rawTransaction);
+    const transactionHash = transaction.transactionHash
     console.log(`Transaction hash: ${transactionHash}`)
     const data = transactionHash + " " + index
     const cid = await addText(data)

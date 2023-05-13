@@ -1,5 +1,6 @@
 import { useState } from "react"
 import axios from 'axios'
+import GenerateCarReceipt from "../Transaction/GenerateCarReceipt"
 const AddCar = () => {
     const [cid,setCid] = useState("")
     const [carDetails, setCarDetails] = useState({
@@ -8,14 +9,25 @@ const AddCar = () => {
         Price: "",
         PrivateKey: ""
     })
-    const submit = () => {
+    const submit = async () => {
         document.getElementById('form').classList.add('hidden')
         document.getElementById('loader').classList.remove('hidden')
         if (carDetails.OwnerID === "" || carDetails.Model === "" || carDetails.Price === "" || carDetails.PrivateKey === "") {
             alert("Please Fill all the fields correctly before submitting")
             return
         }
-        axios.post(`${process.env.REACT_APP_SERVER}/addcar`, carDetails).then((res) => {
+        const carInfo = {
+            carName: carDetails.Model,
+            price: carDetails.Price
+        }
+
+        const receipt = await GenerateCarReceipt(carDetails.PrivateKey, carInfo, carDetails.OwnerID)
+        console.log(receipt)
+        const transactionObject = {
+            OwnerID: carDetails.OwnerID,
+            receipt: receipt
+        }
+        axios.post(`${process.env.REACT_APP_SERVER}/addcar`, transactionObject).then((res) => {
             setCid(res.data.cid)
             document.getElementById('loader').classList.add('hidden')
             document.getElementById('result').classList.remove('hidden')
